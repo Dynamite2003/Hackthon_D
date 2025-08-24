@@ -1,0 +1,28 @@
+units metal
+atom_style atomic
+boundary f f f
+
+read_data input.data
+
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+group mobile id > 0
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Temperature initialization  
+velocity mobile create 300.0 4928459 rot yes dist gaussian
+fix 1 mobile nvt temp 300.0 300.0 100.0
+
+# Output trajectory every 10 steps
+dump 1 all xyz 10 trajectory.xyz
+dump_modify 1 element Li
+
+# Thermodynamics
+thermo_style custom step temp press etotal pe ke
+thermo 100
+
+# Run simulation
+run 1000

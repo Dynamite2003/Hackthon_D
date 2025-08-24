@@ -1,0 +1,73 @@
+# TMD simulation using spring forces toward target
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial structure
+read_data input.data
+
+# Li-Li interactions using Lennard-Jones potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+# Define atom groups
+group mobile id > 0
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Initialize velocities with low temperature for stability
+velocity mobile create 50.0 4928459 rot yes dist gaussian
+
+# TMD implementation using individual spring forces
+# Read target coordinates and apply spring force for each atom
+variable k_spring equal 5.0  # Lower spring constant for stability
+
+# Apply spring forces toward target positions for each atom
+# We'll use individual fix spring commands for each atom
+group atom1 id 1
+fix spring1 atom1 spring tether ${k_spring} -2.518000 1.161000 0.760000 0.0
+group atom2 id 2
+fix spring2 atom2 spring tether ${k_spring} -1.265000 -1.351000 1.915000 0.0
+group atom3 id 3
+fix spring3 atom3 spring tether ${k_spring} -0.036000 2.728000 -0.574000 0.0
+group atom4 id 4
+fix spring4 atom4 spring tether ${k_spring} 1.161000 -2.050000 0.433000 0.0
+group atom5 id 5
+fix spring5 atom5 spring tether ${k_spring} 1.161000 -1.180000 -2.430000 0.0
+group atom6 id 6
+fix spring6 atom6 spring tether ${k_spring} -1.729000 -2.086000 -1.024000 0.0
+group atom7 id 7
+fix spring7 atom7 spring tether ${k_spring} -0.325000 0.032000 -0.397000 0.0
+group atom8 id 8
+fix spring8 atom8 spring tether ${k_spring} 2.337000 0.631000 -0.298000 0.0
+group atom9 id 9
+fix spring9 atom9 spring tether ${k_spring} 0.378000 1.100000 1.978000 0.0
+
+# Temperature control with very low temperature for stability
+fix nvt_fix mobile nvt temp 50.0 10.0 50.0
+
+# Output trajectory every 20 steps for smooth animation
+dump traj_dump all xyz 20 trajectory.xyz
+dump_modify traj_dump element Li
+
+# Thermodynamics output
+thermo_style custom step temp press etotal pe ke
+thermo 50
+
+# Run simulation with smaller timestep and more careful parameters
+timestep 0.0005
+run 4000
+
+# Cleanup springs
+unfix spring1
+unfix spring2
+unfix spring3
+unfix spring4
+unfix spring5
+unfix spring6
+unfix spring7
+unfix spring8
+unfix spring9
+unfix nvt_fix
+undump traj_dump

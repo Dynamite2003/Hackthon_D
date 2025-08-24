@@ -1,0 +1,4 @@
+units metal
+atom_style atomic
+read_data test_simple.data
+run 0

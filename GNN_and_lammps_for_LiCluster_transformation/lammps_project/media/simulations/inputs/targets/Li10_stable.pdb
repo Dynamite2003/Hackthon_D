@@ -1,0 +1,14 @@
+# Li10 cluster - Lowest binding energy structure
+# Binding energy: -0.992700
+CRYST1   10.000   10.000   10.000  90.00  90.00  90.00 P 1           1
+HETATM    1  LI  LIT A   1      -2.418  -1.398   0.638  1.00  0.00          LI
+HETATM    2  LI  LIT A   1      -1.160   0.828  -1.114  1.00  0.00          LI
+HETATM    3  LI  LIT A   1       0.316  -1.580  -0.270  1.00  0.00          LI
+HETATM    4  LI  LIT A   1      -0.358   0.302   1.710  1.00  0.00          LI
+HETATM    5  LI  LIT A   1      -0.234  -2.464   2.716  1.00  0.00          LI
+HETATM    6  LI  LIT A   1       1.488   1.144  -0.450  1.00  0.00          LI
+HETATM    7  LI  LIT A   1      -0.348   3.074   0.510  1.00  0.00          LI
+HETATM    8  LI  LIT A   1       2.254  -0.860   1.760  1.00  0.00          LI
+HETATM    9  LI  LIT A   1       0.396   3.016  -2.546  1.00  0.00          LI
+HETATM   10  LI  LIT A   1       0.840  -0.040  -2.968  1.00  0.00          LI
+END

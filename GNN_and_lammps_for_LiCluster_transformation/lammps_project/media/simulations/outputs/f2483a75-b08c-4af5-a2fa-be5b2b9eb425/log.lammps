@@ -1,0 +1,88 @@
+LAMMPS (22 Jul 2025)
+# Enhanced LAMMPS TMD simulation script
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial structure
+read_data input.data
+Reading data file ...
+  orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  8 atoms
+  read_data CPU = 0.001 seconds
+
+# Define Li-Li interactions (Lennard-Jones potential)
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+# Define groups
+group mobile id > 0
+8 atoms in group mobile
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 12
+  ghost atom cutoff = 12
+  binsize = 6, bins = 4 4 4
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 4.161 | 4.161 | 4.161 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   0             -0.47630594     0             -0.47630594    -109.91759    
+       108   0             -0.93825206     0             -0.93825206     0.74503251   
+Loop time of 4.5791e-05 on 1 procs for 108 steps with 8 atoms
+
+100.5% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+    -0.476305940519769 -0.938165861417636 -0.938252063576945
+  Force two-norm initial, final = 0.22235822 0.0086879126
+  Force max component initial, final = 0.07277238 0.0038997287
+  Final line search alpha, max atom move = 1 0.0038997287
+  Iterations, force evaluations = 108 108
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.1823e-05 | 2.1823e-05 | 2.1823e-05 |   0.0 | 47.66
+Neigh   | 1.666e-06  | 1.666e-06  | 1.666e-06  |   0.0 |  3.64
+Comm    | 4.717e-06  | 4.717e-06  | 4.717e-06  |   0.0 | 10.30
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 1.758e-05  |            |       | 38.40
+
+Nlocal:              8 ave           8 max           8 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:             28 ave          28 max          28 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 28
+Ave neighs/atom = 3.5
+Neighbor list builds = 2
+Dangerous builds = 0
+
+# Initialize velocities
+velocity mobile create 300.0 4928459 rot yes dist gaussian
+
+# TMD setup - read target coordinates
+variable target_file string "target_coords.txt"
+
+# Apply TMD force towards target structure
+fix tmd_fix mobile smd cvel 300.0 tchain 1.0 tequil 1000 tfinal 5000 ${target_file}
+fix tmd_fix mobile smd cvel 300.0 tchain 1.0 tequil 1000 tfinal 5000 target_coords.txt
+ERROR: Expected floating point parameter instead of 'tchain' in input script or data file (src/EXTRA-FIX/fix_smd.cpp:69)
+Last input line: fix tmd_fix mobile smd cvel 300.0 tchain 1.0 tequil 1000 tfinal 5000 ${target_file}

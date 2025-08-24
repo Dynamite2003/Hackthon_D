@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Result for Job {{ job.id }}</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        #viewport { width: 100%; height: 600px; border: 1px solid #ccc; }
+        .controls { margin-top: 1em; }
+        button { padding: 8px 12px; margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+    <h1>Simulation Result for Job: {{ job.id }}</h1>
+    <p><strong>Status:</strong> {{ job.get_status_display }}</p>
+
+    {% if job.status == 'SUCCESS' and xyz_content %}
+        <div id="viewport"></div>
+
+        <div class="controls">
+            <button id="play">Play</button>
+            <button id="pause">Pause</button>
+            <button id="stop">Stop</button>
+        </div>
+
+        {{ xyz_content|json_script:"xyz-data" }}
+
+        <script src="https://unpkg.com/ngl@2.0.0-rc.1/dist/ngl.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // 初始化NGL舞台，并关联到ID为'viewport'的div
+                const stage = new NGL.Stage('viewport');
+
+                // 从页面中获取我们嵌入的XYZ数据
+                const xyzData = document.getElementById('xyz-data').textContent;
+
+                // 将字符串数据转换成一个Blob对象，NGL可以识别它
+                const xyzBlob = new Blob([xyzData], { type: 'text/plain' });
+
+                // 加载Blob对象，并明确告诉NGL这是一个 'xyz' 文件
+                stage.loadFile(xyzBlob, { ext: 'xyz' }).then(function (component) {
+                    // 添加一种或多种分子表示法（例如：球棍模型）
+                    component.addRepresentation('ball+stick');
+
+                    // 让视角自动聚焦到分子上
+                    stage.autoView();
+
+                    // ---- 绑定播放器控制 ----
+                    const player = component.animationPlayers[0];
+
+                    document.getElementById('play').addEventListener('click', function() {
+                        player.play();
+                    });
+                    document.getElementById('pause').addEventListener('click', function() {
+                        player.pause();
+                    });
+                    document.getElementById('stop').addEventListener('click', function() {
+                        player.stop();
+                    });
+                });
+            });
+        </script>
+    {% elif job.status == 'SUCCESS' and not xyz_content %}
+        <p style="color: red;"><strong>Error:</strong> Job status is SUCCESS, but the trajectory file could not be found or read on the server.</p>
+    {% else %}
+        <p>The simulation is not yet complete or has failed. Current status: {{ job.get_status_display }}</p>
+    {% endif %}
+
+</body>
+</html>

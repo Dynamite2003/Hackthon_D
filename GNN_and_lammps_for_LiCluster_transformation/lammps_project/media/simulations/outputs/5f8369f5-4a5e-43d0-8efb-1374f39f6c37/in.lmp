@@ -1,0 +1,48 @@
+# Enhanced LAMMPS TMD simulation script
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial structure
+read_data input.data
+
+# Define Li-Li interactions (Lennard-Jones potential)
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+# Define groups
+group mobile id > 0
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Initialize velocities
+velocity mobile create 300.0 4928459 rot yes dist gaussian
+
+# TMD setup - read target coordinates
+variable target_file string "target_coords.txt"
+
+# Apply TMD force towards target structure
+fix tmd_fix mobile smd cvel 300.0 tchain 1.0 tequil 1000 tfinal 5000 ${target_file}
+
+# Temperature control
+fix nvt_fix mobile nvt temp 300.0 300.0 100.0
+
+# Output trajectory every 20 steps for smoother animation
+dump traj_dump all xyz 20 trajectory.xyz
+dump_modify traj_dump element Li
+
+# Output thermodynamics
+thermo_style custom step temp press etotal pe ke f_tmd_fix
+thermo 100
+
+# Log file
+log simulation.log
+
+# Run TMD simulation
+run 5000
+
+# Clean up
+unfix tmd_fix
+unfix nvt_fix
+undump traj_dump

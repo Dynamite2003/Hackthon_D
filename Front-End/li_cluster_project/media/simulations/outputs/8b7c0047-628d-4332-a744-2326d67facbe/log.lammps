@@ -1,0 +1,262 @@
+LAMMPS (22 Jul 2025)
+# TMD simulation using spring forces toward target
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial structure
+read_data input.data
+Reading data file ...
+  orthogonal box = (-8.4276 -9.2826 -7.9982) to (8.4276 7.5707 7.1413)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  9 atoms
+  read_data CPU = 0.001 seconds
+
+# Li-Li interactions using Lennard-Jones potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+# Define atom groups
+group mobile id > 0
+9 atoms in group mobile
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 12
+  ghost atom cutoff = 12
+  binsize = 6, bins = 3 3 3
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 4.16 | 4.16 | 4.16 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   0             -0.65665694     0             -0.65665694    -225.58085    
+       106   0             -1.1473883      0             -1.1473883     -0.98041366   
+Loop time of 5.1208e-05 on 1 procs for 106 steps with 9 atoms
+
+99.6% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+    -0.656656942286624  -1.14729632941257  -1.14738825279601
+  Force two-norm initial, final = 0.25933626 0.0081460597
+  Force max component initial, final = 0.097402524 0.0036906775
+  Final line search alpha, max atom move = 1 0.0036906775
+  Iterations, force evaluations = 106 106
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.5703e-05 | 2.5703e-05 | 2.5703e-05 |   0.0 | 50.19
+Neigh   | 2.25e-06   | 2.25e-06   | 2.25e-06   |   0.0 |  4.39
+Comm    | 3.803e-06  | 3.803e-06  | 3.803e-06  |   0.0 |  7.43
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 1.945e-05  |            |       | 37.99
+
+Nlocal:              9 ave           9 max           9 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:             36 ave          36 max          36 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 36
+Ave neighs/atom = 4
+Neighbor list builds = 3
+Dangerous builds = 0
+
+# Initialize velocities with low temperature for stability
+velocity mobile create 50.0 4928459 rot yes dist gaussian
+
+# TMD implementation using individual spring forces
+# Read target coordinates and apply spring force for each atom
+variable k_spring equal 5.0  # Lower spring constant for stability
+
+# Apply spring forces toward target positions for each atom
+# We'll use individual fix spring commands for each atom
+group atom1 id 1
+1 atoms in group atom1
+fix spring1 atom1 spring tether ${k_spring} -2.518000 1.161000 0.760000 0.0
+fix spring1 atom1 spring tether 5 -2.518000 1.161000 0.760000 0.0
+group atom2 id 2
+1 atoms in group atom2
+fix spring2 atom2 spring tether ${k_spring} -1.265000 -1.351000 1.915000 0.0
+fix spring2 atom2 spring tether 5 -1.265000 -1.351000 1.915000 0.0
+group atom3 id 3
+1 atoms in group atom3
+fix spring3 atom3 spring tether ${k_spring} -0.036000 2.728000 -0.574000 0.0
+fix spring3 atom3 spring tether 5 -0.036000 2.728000 -0.574000 0.0
+group atom4 id 4
+1 atoms in group atom4
+fix spring4 atom4 spring tether ${k_spring} 1.161000 -2.050000 0.433000 0.0
+fix spring4 atom4 spring tether 5 1.161000 -2.050000 0.433000 0.0
+group atom5 id 5
+1 atoms in group atom5
+fix spring5 atom5 spring tether ${k_spring} 1.161000 -1.180000 -2.430000 0.0
+fix spring5 atom5 spring tether 5 1.161000 -1.180000 -2.430000 0.0
+group atom6 id 6
+1 atoms in group atom6
+fix spring6 atom6 spring tether ${k_spring} -1.729000 -2.086000 -1.024000 0.0
+fix spring6 atom6 spring tether 5 -1.729000 -2.086000 -1.024000 0.0
+group atom7 id 7
+1 atoms in group atom7
+fix spring7 atom7 spring tether ${k_spring} -0.325000 0.032000 -0.397000 0.0
+fix spring7 atom7 spring tether 5 -0.325000 0.032000 -0.397000 0.0
+group atom8 id 8
+1 atoms in group atom8
+fix spring8 atom8 spring tether ${k_spring} 2.337000 0.631000 -0.298000 0.0
+fix spring8 atom8 spring tether 5 2.337000 0.631000 -0.298000 0.0
+group atom9 id 9
+1 atoms in group atom9
+fix spring9 atom9 spring tether ${k_spring} 0.378000 1.100000 1.978000 0.0
+fix spring9 atom9 spring tether 5 0.378000 1.100000 1.978000 0.0
+
+# Temperature control with very low temperature for stability
+fix nvt_fix mobile nvt temp 50.0 10.0 50.0
+
+# Output trajectory every 20 steps for smooth animation
+dump traj_dump all xyz 20 trajectory.xyz
+dump_modify traj_dump element Li
+
+# Thermodynamics output
+thermo_style custom step temp press etotal pe ke
+thermo 50
+
+# Run simulation with smaller timestep and more careful parameters
+timestep 0.0005
+run 4000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 3.035 | 3.035 | 3.035 Mbytes
+   Step          Temp          Press          TotEng         PotEng         KinEng    
+       106   50             11.861015     -1.0956842     -1.1473883      0.051704058  
+       150   90191.625      23575.081      92.922062     -0.34339851     93.26546     
+       200   97242.193      25562.22       100.70571      0.14939265     100.55632    
+       250   86271.294      68831.612      117.88548      28.673959      89.21152     
+       300   96194.996      25357.165      99.497319      0.023885953    99.473433    
+       350   87985.255      41028.465      101.82602      10.84213       90.983895    
+       400   71008.783      20398.274      74.010697      0.5818526      73.428844    
+       450   92585.689      44962.786      108.77799      13.036871      95.741117    
+       500   81210.578      57791.622      105.8728       21.894468      83.978329    
+       550   59792.258      15632.216      61.698631     -0.13141664     61.830048    
+       600   138061.24      35406.731      142.29073     -0.47579218     142.76652    
+       650   107642.89      28878.738      111.2892      -0.022282176    111.31148    
+       700   55088.971      14005.829      56.742751     -0.22371591     56.966467    
+       750   124029.99      38190.804      131.31721      3.0601405      128.25707    
+       800   103794.47      26590.004      106.86764     -0.46426787     107.3319     
+       850   94783.716      29387.069      100.67426      2.6602032      98.014055    
+       900   109650.59      28876.393      113.28528     -0.10233194     113.38761    
+       950   77775.47       21488.474      80.52381       0.0976615      80.426149    
+      1000   81041.495      29999.695      88.917398      5.1139148      83.803483    
+      1050   100497.82      25668.486      103.59336     -0.32954138     103.9229     
+      1100   93534.107      33939.88       101.91263      5.1907765      96.721858    
+      1150   75174.59       19128.142      77.304033     -0.43259443     77.736627    
+      1200   86405.036      56346.309      110.90123      21.551411      89.34982     
+      1250   101231.96      26202.849      104.33318     -0.34887685     104.68206    
+      1300   74518.058      27730.417      81.84327       4.7855501      77.05772     
+      1350   101750.68      26472.045      104.97338     -0.24507511     105.21846    
+      1400   83573.342      23466.94       86.783024      0.3614054      86.421618    
+      1450   76727.086      20330.17       79.429109      0.087074782    79.342034    
+      1500   104988.24      37613.866      114.37576      5.8094001      108.56636    
+      1550   56844.226      16110.124      59.306518      0.52497502     58.781543    
+      1600   79571.324      20908.425      82.088466     -0.19474095     82.283207    
+      1650   114422.82      33276.588      119.72289      1.4004085      118.32248    
+      1700   51066.893      13214.137      52.612749     -0.19456324     52.807312    
+      1750   65291.689      27042.205      73.217769      5.7008639      67.516905    
+      1800   107462.69      29947.574      112.0374       0.91225518     111.12514    
+      1850   55694.286      14970.51       57.558521     -0.033891314    57.592412    
+      1900   79774.484      21920.706      82.89848       0.40518842     82.493291    
+      1950   100759.47      30021.281      105.7192       1.5257306      104.19347    
+      2000   50633.067      12880.75       52.104236     -0.25446449     52.3587      
+      2050   79861.456      21000.227      82.379576     -0.20365154     82.583227    
+      2100   79369.992      20657.698      81.678245     -0.39676861     82.075014    
+      2150   71618.633      19389.119      74.173376      0.11389662     74.059479    
+      2200   65585.892      35648.393      78.541273      10.720138      67.821135    
+      2250   61870.87       15880.573      63.623172     -0.35632887     63.979501    
+      2300   79565.723      20658.774      81.968973     -0.30844283     82.277416    
+      2350   75160.996      27155.861      81.431572      3.7090016      77.72257     
+      2400   44208.429      14782.38       47.255985      1.5408817      45.715103    
+      2450   75021.11       41550.424      90.554898      12.976982      77.577916    
+      2500   61317.671      16716.447      63.37641      -0.031038492    63.407448    
+      2550   49255.208      19726.044      54.854333      3.9204504      50.933882    
+      2600   79370.863      29315.156      86.817403      4.7414885      82.075915    
+      2650   48510.243      14337.088      50.612108      0.44857988     50.163529    
+      2700   63464.688      16706.788      65.391551     -0.2360868      65.627638    
+      2750   78867.209      32785.788      88.556431      7.0013361      81.555095    
+      2800   50589.065      14154.258      52.566221      0.25302247     52.313199    
+      2850   67168.375      19306.411      70.074395      0.61684372     69.457551    
+      2900   65930.512      26618.914      73.304628      5.1271271      68.1775      
+      2950   47225.917      12146.682      48.4891       -0.34633095     48.835431    
+      3000   74565.896      20038.1        76.854555     -0.25263344     77.107189    
+      3050   59350.823      15741.091      61.090824     -0.28274351     61.373568    
+      3100   43811.643      11441.656      44.9489       -0.3558948      45.304795    
+      3150   77886.809      21683.815      80.55668       0.015398584    80.541282    
+      3200   59164.977      15139.921      60.857733     -0.32365449     61.181388    
+      3250   59699.117      16477.99       61.8372        0.10346856     61.733732    
+      3300   54640.326      14553.947      56.06805      -0.43448236     56.502532    
+      3350   50302.218      17583.353      54.207957      2.1913807      52.016576    
+      3400   61205.026      21837.257      66.355513      3.0645488      63.290964    
+      3450   43409.06       13118.727      45.210227      0.32173596     44.888491    
+      3500   54329.422      14093.255      55.815832     -0.36520029     56.181032    
+      3550   63067.993      25920.332      70.145095      4.9276718      65.217424    
+      3600   29245.615      18119.18       36.238673      5.9963338      30.24234     
+      3650   44951.305      25768.89       54.550423      8.067126       46.483297    
+      3700   61897.403      16199.652      63.727347     -0.27959066     64.006938    
+      3750   37738.187      17685.593      42.876137      3.8517888      39.024349    
+      3800   44623.532      12948.617      46.467342      0.32298848     46.144354    
+      3850   60965.961      22588.27       66.689797      3.6460447      63.043752    
+      3900   30850.011      9454.272       32.040631      0.13921563     31.901415    
+      3950   50389.478      19245.283      55.340628      3.2338181      52.10681     
+      4000   53827.163      15946.786      56.249898      0.58824347     55.661655    
+      4050   37042.777      9370.4705      37.904356     -0.40088233     38.305238    
+      4100   58197.693      15783.777      59.790583     -0.39055577     60.181138    
+      4106   49764.178      23553.891      56.897026      5.4368271      51.460199    
+Loop time of 0.00435746 on 1 procs for 4000 steps with 9 atoms
+
+Performance: 39656.148 ns/day, 0.001 hours/ns, 917966.392 timesteps/s, 8.262 Matom-step/s
+90.4% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.00091783 | 0.00091783 | 0.00091783 |   0.0 | 21.06
+Neigh   | 0.00032328 | 0.00032328 | 0.00032328 |   0.0 |  7.42
+Comm    | 0.00017803 | 0.00017803 | 0.00017803 |   0.0 |  4.09
+Output  | 0.0010536  | 0.0010536  | 0.0010536  |   0.0 | 24.18
+Modify  | 0.0015757  | 0.0015757  | 0.0015757  |   0.0 | 36.16
+Other   |            | 0.000309   |            |       |  7.09
+
+Nlocal:              9 ave           9 max           9 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:             36 ave          36 max          36 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 36
+Ave neighs/atom = 4
+Neighbor list builds = 418
+Dangerous builds = 0
+
+# Cleanup springs
+unfix spring1
+unfix spring2
+unfix spring3
+unfix spring4
+unfix spring5
+unfix spring6
+unfix spring7
+unfix spring8
+unfix spring9
+unfix nvt_fix
+undump traj_dump
+Total wall time: 0:00:00

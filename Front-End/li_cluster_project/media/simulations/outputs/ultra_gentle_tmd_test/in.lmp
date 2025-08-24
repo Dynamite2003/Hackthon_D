@@ -1,0 +1,96 @@
+# TMD simulation using spring forces toward target
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial structure
+read_data input.data
+
+# Li-Li interactions using Lennard-Jones potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+# Define atom groups
+group mobile id > 0
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Initialize velocities with minimal temperature for nearly static start
+velocity mobile create 1.0 4928459 rot yes dist gaussian
+
+# Progressive TMD implementation - extremely gentle multi-stage approach
+# Read target coordinates and apply spring force for each atom
+variable k_stage1 equal 0.02  # Minimal initial spring
+variable k_stage2 equal 0.1   # Very weak spring  
+variable k_stage3 equal 1.0   # Weak-moderate spring
+variable k_final equal 5.0    # Final moderate spring
+
+# Apply spring forces toward target positions for each atom
+# We'll use individual fix spring commands for each atom
+group atom1 id 1
+group atom2 id 2
+group atom3 id 3
+
+# 4-Stage Ultra-Progressive TMD with minimal initial movement
+# Output trajectory every 50 steps
+dump traj_dump all xyz 50 trajectory.xyz
+dump_modify traj_dump element Li
+
+# Thermodynamics output
+thermo_style custom step temp press etotal pe ke
+thermo 100
+timestep 0.001
+
+# Stage 1: Minimal springs for ultra-gentle start
+fix spring1_1 atom1 spring tether ${k_stage1} 0.000000 0.000000 0.000000 0.0
+fix spring2_1 atom2 spring tether ${k_stage1} 2.500000 0.000000 0.000000 0.0
+fix spring3_1 atom3 spring tether ${k_stage1} 1.250000 2.165000 0.000000 0.0
+
+fix nvt_1 mobile nvt temp 1.0 1.5 40.0
+run 8000
+
+# Stage 2: Very weak springs with minimal heating
+unfix spring1_1
+unfix spring2_1
+unfix spring3_1
+fix spring1_2 atom1 spring tether ${k_stage2} 0.000000 0.000000 0.000000 0.0
+fix spring2_2 atom2 spring tether ${k_stage2} 2.500000 0.000000 0.000000 0.0
+fix spring3_2 atom3 spring tether ${k_stage2} 1.250000 2.165000 0.000000 0.0
+
+unfix nvt_1
+fix nvt_2 mobile nvt temp 1.5 2.0 40.0
+run 10000
+
+# Stage 3: Weak-moderate springs with gradual heating
+unfix spring1_2
+unfix spring2_2
+unfix spring3_2
+fix spring1_3 atom1 spring tether ${k_stage3} 0.000000 0.000000 0.000000 0.0
+fix spring2_3 atom2 spring tether ${k_stage3} 2.500000 0.000000 0.000000 0.0
+fix spring3_3 atom3 spring tether ${k_stage3} 1.250000 2.165000 0.000000 0.0
+
+unfix nvt_2
+fix nvt_3 mobile nvt temp 2.0 1.5 30.0
+run 12000
+
+# Stage 4: Final convergence with moderate springs
+unfix spring1_3
+unfix spring2_3
+unfix spring3_3
+fix spring1_4 atom1 spring tether ${k_final} 0.000000 0.000000 0.000000 0.0
+fix spring2_4 atom2 spring tether ${k_final} 2.500000 0.000000 0.000000 0.0
+fix spring3_4 atom3 spring tether ${k_final} 1.250000 2.165000 0.000000 0.0
+
+unfix nvt_3
+fix nvt_4 mobile nvt temp 1.5 1.0 30.0
+run 10000
+
+# Cleanup springs
+unfix spring1_4
+unfix spring2_4
+unfix spring3_4
+
+# Final cleanup
+unfix nvt_4
+undump traj_dump

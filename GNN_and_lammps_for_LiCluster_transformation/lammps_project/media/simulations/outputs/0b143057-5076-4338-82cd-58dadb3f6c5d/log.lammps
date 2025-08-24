@@ -1,0 +1,94 @@
+LAMMPS (22 Jul 2025)
+units metal
+atom_style atomic
+boundary f f f
+
+read_data input.data
+Reading data file ...
+  orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  3 atoms
+  read_data CPU = 0.000 seconds
+
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+group mobile id > 0
+3 atoms in group mobile
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 12
+  ghost atom cutoff = 12
+  binsize = 6, bins = 4 4 4
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 4.161 | 4.161 | 4.161 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   0              29.063718      0              29.063718      24742.648    
+        10   0             -0.10155418     0             -0.10155418     0.3648597    
+Loop time of 6.458e-06 on 1 procs for 10 steps with 3 atoms
+
+108.4% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+      29.0637176652504 -0.101548899509325 -0.101554182030058
+  Force two-norm initial, final = 151.31133 0.0013799934
+  Force max component initial, final = 61.77259 0.00056337996
+  Final line search alpha, max atom move = 1 0.00056337996
+  Iterations, force evaluations = 10 10
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 1.17e-06   | 1.17e-06   | 1.17e-06   |   0.0 | 18.12
+Neigh   | 5.42e-07   | 5.42e-07   | 5.42e-07   |   0.0 |  8.39
+Comm    | 7.04e-07   | 7.04e-07   | 7.04e-07   |   0.0 | 10.90
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 4.042e-06  |            |       | 62.59
+
+Nlocal:              3 ave           3 max           3 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              3 ave           3 max           3 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 3
+Ave neighs/atom = 1
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Temperature initialization
+velocity mobile create 300.0 4928459 rot yes dist gaussian
+fix 1 mobile nvt temp 300.0 300.0 100.0
+
+# Output trajectory every 10 steps
+dump 1 all xyz 10 trajectory.xyz
+dump_modify 1 element Li
+
+# Thermodynamics
+thermo_style custom step temp press etotal pe ke
+thermo 100
+
+# Run simulation
+run 1000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 3.036 | 3.036 | 3.036 Mbytes
+   Step          Temp          Press          TotEng         PotEng         KinEng    
+        10   300            10.719738     -0.023998095   -0.10155418     0.077556087  
+       100   177.0574      -13.213938     -0.023980337   -0.069753268    0.045772931  
+ERROR: Lost atoms: original 3 current 2
+For more information see https://docs.lammps.org/err0008 (src/thermo.cpp:526)

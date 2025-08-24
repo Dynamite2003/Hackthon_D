@@ -1,0 +1,14 @@
+LAMMPS (22 Jul 2025)
+units metal
+atom_style atomic
+boundary f f f
+
+read_data input.data
+Reading data file ...
+  orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  2 atoms
+ERROR: Did not assign all atoms correctly
+For more information see https://docs.lammps.org/err0016 (src/read_data.cpp:1600)
+Last input line: read_data input.data

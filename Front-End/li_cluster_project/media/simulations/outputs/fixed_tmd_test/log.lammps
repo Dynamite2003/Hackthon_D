@@ -1,0 +1,122 @@
+LAMMPS (22 Jul 2025)
+# TMD simulation using spring forces toward target
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial structure
+read_data input.data
+Reading data file ...
+  orthogonal box = (-8.4276 -9.2826 -4.5725) to (5 4.1431 7.1413)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  4 atoms
+  read_data CPU = 0.000 seconds
+
+# Li-Li interactions using Lennard-Jones potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+# Define atom groups
+group mobile id > 0
+4 atoms in group mobile
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 12
+  ghost atom cutoff = 12
+  binsize = 6, bins = 3 3 2
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 4.16 | 4.16 | 4.16 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+         0   0             -0.19267912     0             -0.19267912    -162.33727    
+        65   0             -0.29999491     0             -0.29999491    -0.014678157  
+Loop time of 2.1958e-05 on 1 procs for 65 steps with 4 atoms
+
+100.2% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+    -0.192679116838022  -0.29998316612659    -0.299994905476
+  Force two-norm initial, final = 0.15791248 0.0021476288
+  Force max component initial, final = 0.071467507 0.0010668444
+  Final line search alpha, max atom move = 1 0.0010668444
+  Iterations, force evaluations = 65 65
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 8.258e-06  | 8.258e-06  | 8.258e-06  |   0.0 | 37.61
+Neigh   | 5e-07      | 5e-07      | 5e-07      |   0.0 |  2.28
+Comm    | 2.949e-06  | 2.949e-06  | 2.949e-06  |   0.0 | 13.43
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 1.025e-05  |            |       | 46.68
+
+Nlocal:              4 ave           4 max           4 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:              0 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:              6 ave           6 max           6 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 6
+Ave neighs/atom = 1.5
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Initialize velocities with controlled temperature
+velocity mobile create 200.0 4928459 rot yes dist gaussian
+
+# TMD implementation using individual spring forces
+# Read target coordinates and apply spring force for each atom
+variable k_spring equal 20.0  # Spring constant
+
+# Apply spring forces toward target positions for each atom
+# We'll use individual fix spring commands for each atom
+group atom1 id 1
+1 atoms in group atom1
+fix spring1 atom1 spring tether ${k_spring} 0.663000 -0.918000 0.663000 0.0
+fix spring1 atom1 spring tether 20 0.663000 -0.918000 0.663000 0.0
+group atom2 id 2
+1 atoms in group atom2
+fix spring2 atom2 spring tether ${k_spring} 1.921000 -0.012000 -1.928000 0.0
+fix spring2 atom2 spring tether 20 1.921000 -0.012000 -1.928000 0.0
+group atom3 id 3
+1 atoms in group atom3
+fix spring3 atom3 spring tether ${k_spring} -0.656000 0.940000 -0.656000 0.0
+fix spring3 atom3 spring tether 20 -0.656000 0.940000 -0.656000 0.0
+group atom4 id 4
+1 atoms in group atom4
+fix spring4 atom4 spring tether ${k_spring} -1.928000 -0.012000 1.921000 0.0
+fix spring4 atom4 spring tether 20 -1.928000 -0.012000 1.921000 0.0
+
+# Temperature control for gradual transition
+fix nvt_fix mobile nvt temp 200.0 50.0 100.0
+
+# Output trajectory every 15 steps for smooth animation
+dump traj_dump all xyz 15 trajectory.xyz
+dump_modify traj_dump element Li
+
+# Thermodynamics output
+thermo_style custom step temp press etotal pe ke
+thermo 100
+
+# Run simulation with gradual cooling and spring guidance
+run 6000
+Generated 0 of 0 mixed pair_coeff terms from geometric mixing rule
+Per MPI rank memory allocation (min/avg/max) = 3.035 | 3.035 | 3.035 Mbytes
+   Step          Temp          Press          TotEng         PotEng         KinEng    
+        65   200            39.213835     -0.22243882    -0.29999491     0.077556087  
+ERROR: Lost atoms: original 4 current 3
+For more information see https://docs.lammps.org/err0008 (src/thermo.cpp:526)

@@ -1,0 +1,12 @@
+LAMMPS (22 Jul 2025)
+units metal
+atom_style atomic
+boundary f f f
+
+read_data input.data
+Reading data file ...
+  orthogonal box = (0 0 0) to (20 20 20)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+ERROR: Unexpected end of data file (src/read_data.cpp:1563)
+Last input line: read_data input.data

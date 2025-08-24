@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Li团簇生长模拟</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1600px;
+        }
+        .card {
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+        #plot-container {
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            border: 1px dashed #ccc;
+            border-radius: 0.5rem;
+        }
+        #plot-container iframe {
+            width: 100%;
+            height: 100%;
+            min-height: 600px;
+            border: none;
+        }
+        pre {
+            background-color: #212529;
+            color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message|safe }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="text-center mb-4">
+            <h1 class="display-5">模拟金属Li团簇生长</h1>
+            <p class="lead">一个基于Django和AI模型的交互式Web应用</p>
+        </div>
+
+        <!-- 功能介绍卡片 -->
+        <div class="card mb-4 border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">🔬 功能介绍</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">本网站为化学研究者提供了方便快捷预测金属Li团簇生长模拟的功能，本网站支持两个功能：</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start mb-3">
+                            <span class="badge bg-primary me-3 mt-1">1</span>
+                            <div>
+                                <h6 class="fw-bold">位点预测与可视化</h6>
+                                <p class="mb-0 text-muted">用户可以在输入框中输入已经存在的Li<sub>i</sub>的每一个原子的三维坐标，并且选择合适的探索策略和Top-K候选数目，点击生成后，后端会自动调用训练好的SchNet进行推理，从探索策略选择的众多点位中预测新结构的结合能，返回最稳定的待选吸附位点。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <span class="badge bg-success me-3 mt-1">2</span>
+                            <div>
+                                <h6 class="fw-bold">轨迹生成模拟</h6>
+                                <p class="mb-0 text-muted">用户可以选择预测的点位，将新的结构输入给后端轨迹生成器进行分子动力学模拟，系统会自动生成从吸附时结构到最终弛豫稳定后结构的转变轨迹。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Input Column -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">输入参数</div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">输入方式</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="input_type" id="input_type_coords" value="coords" checked>
+                                    <label class="form-check-label" for="input_type_coords">
+                                        输入原子坐标
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="input_type" id="input_type_count" value="atom_count">
+                                    <label class="form-check-label" for="input_type_count">
+                                        输入原子数 (使用最稳定结构)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3" id="coords_input_div">
+                                <label for="coords_text" class="form-label">Li原子坐标 (格式: x,y,z)</label>
+                                <textarea class="form-control" id="coords_text" name="coords_text" rows="10">{{ default_coords }}</textarea>
+                            </div>
+
+                            <div class="mb-3" id="atom_count_input_div" style="display: none;">
+                                <label for="num_atoms" class="form-label">原子数</label>
+                                <input type="number" class="form-control" id="num_atoms" name="num_atoms" value="8" min="2">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="search_strategy" class="form-label">搜索策略</label>
+                                <select class="form-select" id="search_strategy" name="search_strategy">
+                                    <option value="combined" selected>Combined</option>
+                                    <option value="basin_hopping">Basin Hopping (Advanced)</option>
+                                    <option value="random">Random</option>
+                                    <option value="grid">Grid</option>
+                                    <option value="spherical">Spherical</option>
+                                    <option value="neighbor">Neighbor</option>
+                                    <option value="surface">Surface</option>
+                                    <option value="surface_shell">Surface Shell</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="top_k" class="form-label">返回前k个最佳位点</label>
+                                <input type="number" class="form-control" id="top_k" name="top_k" value="1" min="1" max="10">
+                            </div>
+                            <div class="mb-3">
+                                <label for="visualization_type" class="form-label">可视化模型</label>
+                                <select class="form-select" id="visualization_type" name="visualization_type">
+                                    <option value="space_filling" selected>空间填充模型</option>
+                                    <option value="ball_stick">球棍模型</option>
+                                </select>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">生成</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Column -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <span>可视化结果</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="plot-container">
+                            {% if plot_html %}
+                                {{ plot_html|safe }}
+                            {% else %}
+                                <p class="text-muted">结果将在此处显示</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if parsed_sites %}
+                <div class="card mt-4">
+                    <div class="card-header">Top-K 预测位点</div>
+                    <div class="card-body p-2">
+                        <ul class="list-group list-group-flush">
+                            {% for site in parsed_sites %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-bold">位点 #{{ site.rank }}</div>
+                                        <small class="text-muted font-monospace" id="site-coords-{{ forloop.counter0 }}">{{ site.coords }}</small>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary ms-3" onclick="selectSite({{ forloop.counter0 }})">选为B结构</button>
+                                    <span class="badge rounded-pill fs-6 ms-3" style="background-color: {{ site.color }}; color: white; min-width: 80px;">{{ site.energy }} eV</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if logs %}
+                <div class="card mt-4">
+                    <div class="card-header">运行日志</div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <pre class="flex-grow-1 me-3 mb-0" style="min-width: 0;"><code>{{ logs }}</code></pre>
+                            {% if download_path %}
+                            <div style="min-width: 220px;" class="text-center">
+                                <a href="{{ download_path }}" class="btn btn-warning btn-lg w-100" download>
+                                    <i class="fas fa-download me-2"></i>
+                                    <strong>下载XYZ轨迹</strong>
+                                </a>
+                                <small class="text-muted mt-2 d-block">点击按钮下载</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Trajectory Simulation Section -->
+                {% if plot_html %}
+                <div class="card mt-4 border-success">
+                    <div class="card-header bg-success text-white">分子动力学模拟</div>
+                    <div class="card-body">
+                        <p class="card-text">此功能将GNN预测的最终结构(结构A)作为初始状态,通过选择的模拟方式,将其转换为下方定义的目标最优结构(结构B),以观察其转换过程和轨迹。</p>
+                        
+                        <form method="post" id="simulation-form">
+                            {% csrf_token %}
+                            <input type="hidden" id="hidden_coords_text" name="coords_text" value="">
+                            <input type="hidden" id="hidden_selected_site" name="selected_site_coords" value="">
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">模拟方式</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="simulation_method" id="method_trajectory" value="trajectory" checked>
+                                    <label class="form-check-label" for="method_trajectory">
+                                        <strong>轨迹生成器</strong> - 快速插值生成平滑轨迹
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="simulation_method" id="method_lammps" value="lammps">
+                                    <label class="form-check-label" for="method_lammps">
+                                        <strong>LAMMPS物理模拟</strong> - 基于物理的分子动力学模拟
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle"></i> 自动模拟说明</h6>
+                                <p class="mb-2">系统将自动使用输入框中的Li<sub>N</sub>坐标作为初始结构，并从targets文件夹中查找对应的Li<sub>N</sub>_stable.pdb作为目标结构。</p>
+                                <p class="mb-0"><strong>当前输入原子数：</strong> <span id="atom-count">计算中...</span></p>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" name="start_simulation" class="btn btn-success btn-lg" onclick="prepareSimulation()">开始模拟</button>
+                            </div>
+                        </form>
+                        
+                        
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // 自动更新原子数显示
+    function updateAtomCount() {
+        const coordsText = document.getElementById('coords_text').value.trim();
+        const lines = coordsText.split('\n');
+        let atomCount = 0;
+        
+        for (let line of lines) {
+            line = line.trim();
+            if (line && line.includes(',')) {
+                const parts = line.split(',');
+                if (parts.length === 3) {
+                    atomCount++;
+                }
+            }
+        }
+        
+        const atomCountElement = document.getElementById('atom-count');
+        if (atomCountElement) {
+            atomCountElement.textContent = atomCount;
+        }
+        return atomCount;
+    }
+    
+    // 准备模拟数据
+    function prepareSimulation() {
+        const coordsText = document.getElementById('coords_text').value.trim();
+        const selectedSite = document.getElementById('hidden_selected_site').value;
+        
+        // 将坐标复制到隐藏字段
+        document.getElementById('hidden_coords_text').value = coordsText;
+        
+        return true; // 允许表单提交
+    }
+    
+    // 页面加载时更新原子数
+    document.addEventListener('DOMContentLoaded', function() {
+        updateAtomCount();
+        
+        // 监听输入框变化
+        document.getElementById('coords_text').addEventListener('input', updateAtomCount);
+
+        // 新增：处理输入方式切换
+        const inputTypeCoords = document.getElementById('input_type_coords');
+        const inputTypeCount = document.getElementById('input_type_count');
+        const coordsDiv = document.getElementById('coords_input_div');
+        const countDiv = document.getElementById('atom_count_input_div');
+        const coordsTextarea = document.getElementById('coords_text');
+        const numAtomsInput = document.getElementById('num_atoms');
+
+        function toggleInputMethod() {
+            if (inputTypeCoords.checked) {
+                coordsDiv.style.display = 'block';
+                countDiv.style.display = 'none';
+                coordsTextarea.required = true;
+                numAtomsInput.required = false;
+            } else {
+                coordsDiv.style.display = 'none';
+                countDiv.style.display = 'block';
+                coordsTextarea.required = false;
+                numAtomsInput.required = true;
+            }
+        }
+
+        inputTypeCoords.addEventListener('change', toggleInputMethod);
+        inputTypeCount.addEventListener('change', toggleInputMethod);
+
+        // 初始化状态
+        toggleInputMethod();
+    });
+
+    function selectSite(siteIndex) {
+        // 1. 获取原始的A结构坐标
+        const originalCoords = document.getElementById('coords_text').value.trim();
+
+        // 2. 获取被选中的预测位点坐标
+        const siteCoordsElement = document.getElementById('site-coords-' + siteIndex);
+        if (!siteCoordsElement) {
+            console.error('Could not find site coordinates element for index: ' + siteIndex);
+            return;
+        }
+        const selectedSiteCoords = siteCoordsElement.innerText.trim();
+
+        // 3. 将选择的位点坐标存储到隐藏字段中
+        document.getElementById('hidden_selected_site').value = selectedSiteCoords;
+        
+        // 4. 更新原子数显示 (包含新添加的原子)
+        updateAtomCount();
+        const newAtomCount = updateAtomCount() + 1; // 加上新选择的位点
+        document.getElementById('atom-count').textContent = newAtomCount;
+        
+        // 5. 给用户提示
+        const alertDiv = document.querySelector('.alert-info');
+        if (alertDiv) {
+            alertDiv.classList.remove('alert-info');
+            alertDiv.classList.add('alert-success');
+            alertDiv.innerHTML = `
+                <h6><i class="fas fa-check-circle"></i> 位点已选择</h6>
+                <p class="mb-2">已选择位点 #${parseInt(siteIndex) + 1}，坐标：${selectedSiteCoords}</p>
+                <p class="mb-0"><strong>模拟原子数：</strong> ${newAtomCount} (原始${newAtomCount-1} + 新位点1)</p>
+            `;
+            
+            // 滚动到模拟区域
+            alertDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+    </script>
+</body>
+</html>

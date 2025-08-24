@@ -1,0 +1,61 @@
+# TMD simulation using spring forces toward target
+units metal
+atom_style atomic
+boundary f f f
+
+# Read initial structure
+read_data input.data
+
+# Li-Li interactions using Lennard-Jones potential
+pair_style lj/cut 10.0
+pair_coeff 1 1 0.05 2.5
+
+# Define atom groups
+group mobile id > 0
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Initialize velocities with controlled temperature
+velocity mobile create 200.0 4928459 rot yes dist gaussian
+
+# TMD implementation using individual spring forces
+# Read target coordinates and apply spring force for each atom
+variable k_spring equal 20.0  # Spring constant
+
+# Apply spring forces toward target positions for each atom
+# We'll use individual fix spring commands for each atom
+fix spring1 1 spring tether ${k_spring} -1.906000 0.819000 -1.896000 0.0
+fix spring2 2 spring tether ${k_spring} 0.511000 0.004000 -0.754000 0.0
+fix spring3 3 spring tether ${k_spring} 2.776000 1.632000 -0.743000 0.0
+fix spring4 4 spring tether ${k_spring} -0.040000 2.692000 -0.405000 0.0
+fix spring5 5 spring tether ${k_spring} 0.901000 1.273000 -3.144000 0.0
+fix spring6 6 spring tether ${k_spring} 1.212000 1.089000 1.758000 0.0
+fix spring7 7 spring tether ${k_spring} 0.549000 -1.932000 1.218000 0.0
+fix spring8 8 spring tether ${k_spring} -1.541000 0.547000 1.075000 0.0
+
+# Temperature control for gradual transition
+fix nvt_fix mobile nvt temp 200.0 50.0 100.0
+
+# Output trajectory every 15 steps for smooth animation
+dump traj_dump all xyz 15 trajectory.xyz
+dump_modify traj_dump element Li
+
+# Thermodynamics output
+thermo_style custom step temp press etotal pe ke
+thermo 100
+
+# Run simulation with gradual cooling and spring guidance
+run 6000
+
+# Cleanup springs
+unfix spring1
+unfix spring2
+unfix spring3
+unfix spring4
+unfix spring5
+unfix spring6
+unfix spring7
+unfix spring8
+unfix nvt_fix
+undump traj_dump

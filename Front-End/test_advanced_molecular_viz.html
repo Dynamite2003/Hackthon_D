@@ -1,0 +1,160 @@
+<div id="3dmolviewer_175597557271181"  style="position: relative; width: 1000px; height: 800px;">
+        <p id="3dmolwarning_175597557271181" style="background-color:#ffcccc;color:black">3Dmol.js failed to load for some reason.  Please check your browser console for error messages.<br></p>
+        </div>
+<script>
+
+var loadScriptAsync = function(uri){
+  return new Promise((resolve, reject) => {
+    //this is to ignore the existence of requirejs amd
+    var savedexports, savedmodule;
+    if (typeof exports !== 'undefined') savedexports = exports;
+    else exports = {}
+    if (typeof module !== 'undefined') savedmodule = module;
+    else module = {}
+
+    var tag = document.createElement('script');
+    tag.src = uri;
+    tag.async = true;
+    tag.onload = () => {
+        exports = savedexports;
+        module = savedmodule;
+        resolve();
+    };
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+});
+};
+
+if(typeof $3Dmolpromise === 'undefined') {
+$3Dmolpromise = null;
+  $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@2.5.2/build/3Dmol-min.js');
+}
+
+var viewer_175597557271181 = null;
+var warn = document.getElementById("3dmolwarning_175597557271181");
+if(warn) {
+    warn.parentNode.removeChild(warn);
+}
+$3Dmolpromise.then(function() {
+viewer_175597557271181 = $3Dmol.createViewer(document.getElementById("3dmolviewer_175597557271181"),{backgroundColor:"white"});
+viewer_175597557271181.zoomTo();
+	viewer_175597557271181.addModel("9\nLi\u56e2\u7c07\u4f4d\u70b9\u9884\u6d4b\u7ed3\u679c (\u5019\u9009: 137)\nLi -1.7138 -2.5707 2.1413\nLi -3.4276 -0.8569 0.4275\nLi 0.0000 -0.8569 0.4275\nLi 0.0000 -4.2826 0.4275\nLi 1.7138 0.8569 -1.2844\nLi 3.4276 2.5707 0.4275\nLi 0.0000 2.5707 0.4275\nLi 0.0000 2.5707 -2.9982\nN 1.9393 4.4813 -2.0343\n","xyz");
+	viewer_175597557271181.setStyle({"stick": {"radius": 0.15, "color": "gray"}, "sphere": {"scale": 0.15}});
+	viewer_175597557271181.setStyle({"elem": "Li"},{"sphere": {"color": "#CC80FF", "scale": 0.25}, "stick": {"radius": 0.15, "color": "#CC80FF"}});
+	viewer_175597557271181.setStyle({"elem": "N"},{"sphere": {"color": "gold", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "gold"}});
+	viewer_175597557271181.setStyle({"elem": "P"},{"sphere": {"color": "#0077BB", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#0077BB"}});
+	viewer_175597557271181.setStyle({"elem": "O"},{"sphere": {"color": "#EE7733", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#EE7733"}});
+	viewer_175597557271181.setStyle({"elem": "F"},{"sphere": {"color": "#009988", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#009988"}});
+	viewer_175597557271181.setStyle({"elem": "C"},{"sphere": {"color": "#CC3311", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#CC3311"}});
+	viewer_175597557271181.setStyle({"elem": "S"},{"sphere": {"color": "#BBBBBB", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#BBBBBB"}});
+	viewer_175597557271181.addCylinder({"start": {"x": -1.7138, "y": -2.5707, "z": 2.1413}, "end": {"x": -3.4276, "y": -0.8569, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": -1.7138, "y": -2.5707, "z": 2.1413}, "end": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": -1.7138, "y": -2.5707, "z": 2.1413}, "end": {"x": 0.0, "y": -4.2826, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": -3.4276, "y": -0.8569, "z": 0.4275}, "end": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "end": {"x": 0.0, "y": -4.2826, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "end": {"x": 1.7138, "y": 0.8569, "z": -1.2844}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "end": {"x": 0.0, "y": 2.5707, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 1.7138, "y": 0.8569, "z": -1.2844}, "end": {"x": 3.4276, "y": 2.5707, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 1.7138, "y": 0.8569, "z": -1.2844}, "end": {"x": 0.0, "y": 2.5707, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 1.7138, "y": 0.8569, "z": -1.2844}, "end": {"x": 0.0, "y": 2.5707, "z": -2.9982}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 3.4276, "y": 2.5707, "z": 0.4275}, "end": {"x": 0.0, "y": 2.5707, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 3.4276, "y": 2.5707, "z": 0.4275}, "end": {"x": 1.939260353306928, "y": 4.4812896759107765, "z": -2.0343260357154618}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": 2.5707, "z": 0.4275}, "end": {"x": 0.0, "y": 2.5707, "z": -2.9982}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": 2.5707, "z": -2.9982}, "end": {"x": 1.939260353306928, "y": 4.4812896759107765, "z": -2.0343260357154618}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_175597557271181.addBox({"center": {"x": 0.0, "y": 0.09934483795538807, "z": -0.42845}, "dimensions": {"w": 8.8552, "h": 10.763889675910777, "d": 7.1395}, "color": "black", "wireframe": true, "opacity": 0.6});
+	viewer_175597557271181.addArrow({"start": {"x": -4.4276, "y": -5.2826, "z": -3.9982}, "end": {"x": 2.0307338055464657, "y": -5.2826, "z": -3.9982}, "color": "red", "radius": 0.1});
+	viewer_175597557271181.addLabel("X",{"position": {"x": 2.0307338055464657, "y": -5.2826, "z": -3.9982}, "fontColor": "red", "fontSize": 14});
+	viewer_175597557271181.addArrow({"start": {"x": -4.4276, "y": -5.2826, "z": -3.9982}, "end": {"x": -4.4276, "y": 1.1757338055464652, "z": -3.9982}, "color": "green", "radius": 0.1});
+	viewer_175597557271181.addLabel("Y",{"position": {"x": -4.4276, "y": 1.1757338055464652, "z": -3.9982}, "fontColor": "green", "fontSize": 14});
+	viewer_175597557271181.addArrow({"start": {"x": -4.4276, "y": -5.2826, "z": -3.9982}, "end": {"x": -4.4276, "y": -5.2826, "z": 2.4601338055464654}, "color": "blue", "radius": 0.1});
+	viewer_175597557271181.addLabel("Z",{"position": {"x": -4.4276, "y": -5.2826, "z": 2.4601338055464654}, "fontColor": "blue", "fontSize": 14});
+	viewer_175597557271181.zoomTo();
+	viewer_175597557271181.spin(true);
+viewer_175597557271181.render();
+});
+</script>
+        <script>
+        // 全局旋转控制函数
+        window.toggleMoleculeRotation = function(shouldRotate) {
+            console.log('toggleMoleculeRotation called with:', shouldRotate);
+            
+            // 尝试找到viewer实例
+            var viewers = [];
+            
+            // 方法1: 通过$3Dmol.viewers
+            if (window.$3Dmol && window.$3Dmol.viewers) {
+                viewers = Object.values(window.$3Dmol.viewers);
+            }
+            
+            // 方法2: 查找以viewer_开头的全局变量
+            for (var prop in window) {
+                if (prop.startsWith('viewer_') && window[prop] && typeof window[prop].spin === 'function') {
+                    viewers.push(window[prop]);
+                }
+            }
+            
+            console.log('找到viewer数量:', viewers.length);
+            
+            viewers.forEach((viewer, index) => {
+                try {
+                    console.log(`处理viewer ${index}, 设置旋转:`, shouldRotate);
+                    viewer.spin(shouldRotate);
+                    viewer.render();
+                    console.log(`viewer ${index} 旋转状态已更新`);
+                } catch(e) {
+                    console.error(`处理viewer ${index} 失败:`, e);
+                }
+            });
+            
+            return viewers.length > 0;
+        };
+        
+        // 旋转控制功能 (保留postMessage支持)
+        window.addEventListener('message', function(event) {
+            console.log('收到postMessage:', event.data);
+            if (event.data.action === 'stopSpin') {
+                window.toggleMoleculeRotation(false);
+            } else if (event.data.action === 'startSpin') {
+                window.toggleMoleculeRotation(true);
+            }
+        });
+        
+        // 当页面加载完成后通知父窗口并设置全局引用
+        function setupRotationControl() {
+            console.log('设置旋转控制...');
+            
+            // 将函数暴露到父窗口
+            if (window.parent !== window) {
+                try {
+                    window.parent.molViewerControl = window.toggleMoleculeRotation;
+                    console.log('已设置父窗口旋转控制函数');
+                } catch(e) {
+                    console.log('无法设置父窗口函数:', e.message);
+                }
+                
+                window.parent.postMessage({action: 'viewerReady'}, '*');
+                console.log('已通知父窗口viewer就绪');
+            }
+            
+            // 调试信息
+            if (window.$3Dmol && window.$3Dmol.viewers) {
+                console.log('可用的3Dmol viewers:', Object.keys(window.$3Dmol.viewers));
+            }
+            
+            for (var prop in window) {
+                if (prop.startsWith('viewer_')) {
+                    console.log('找到全局viewer变量:', prop);
+                }
+            }
+        }
+        
+        // 等待页面完全加载
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(setupRotationControl, 2000);
+            });
+        } else {
+            setTimeout(setupRotationControl, 2000);
+        }
+        </script>
+        
