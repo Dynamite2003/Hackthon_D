@@ -313,12 +313,14 @@ def index(request):
             import uuid
             import shutil
             
-            trajectory_project_dir = '/Users/zhiyuan/Documents/HackthonAI4Sci/code/GNN_and_lammps_for_LiCluster_transformation/lammps_project'
+            # 使用当前Django项目的路径
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            trajectory_project_dir = current_dir  # 轨迹生成器项目路径与当前项目相同
             
             try:
                 # 1. 找到目标结构文件
                 target_pdb_path = os.path.join(
-                    trajectory_project_dir, 
+                    current_dir, 
                     'media', 'simulations', 'inputs', 'targets',
                     f'Li{num_atoms}_stable.pdb'
                 )
@@ -418,7 +420,9 @@ def index(request):
                     messages.error(request, "请输入原子数。")
                     return redirect('index')
                 
-                pdb_file_path = f'/Users/zhiyuan/Documents/HackthonAI4Sci/code/GNN_and_lammps_for_LiCluster_transformation/lammps_project/media/simulations/inputs/targets/Li{num_atoms}_stable.pdb'
+                # 使用当前Django项目的路径
+                current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                pdb_file_path = os.path.join(current_dir, 'media', 'simulations', 'inputs', 'targets', f'Li{num_atoms}_stable.pdb')
 
                 if not os.path.exists(pdb_file_path):
                     messages.error(request, f"未找到 {num_atoms} 个原子的稳定结构文件。")
@@ -445,7 +449,7 @@ def index(request):
 
             coords_filename = os.path.join(code_root, "django_input_coords.txt")
             output_html_path = os.path.join(code_root, "test_advanced_molecular_viz.html")
-            script_path = os.path.join(code_root, "predict_sites.py")
+            script_path = os.path.join(code_root, "run_predict_sites.py")
 
             with open(coords_filename, "w") as f:
                 f.write(coords_text.strip())
