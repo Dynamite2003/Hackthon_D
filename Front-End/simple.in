@@ -1,4 +1,0 @@
-units metal
-atom_style atomic
-read_data simple.data
-run 0

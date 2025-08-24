@@ -8,8 +8,18 @@ from torch.utils.data.distributed import DistributedSampler
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
-from li_dataset import LiClusterDataset
-from model import SchNetModel
+try:
+    # 尝试相对导入（当作为模块使用时）
+    from ..data_processing.li_dataset import LiClusterDataset
+    from .model import SchNetModel
+except ImportError:
+    # 回退到绝对导入（当作为脚本直接运行时）
+    import sys
+    import os
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, current_dir)
+    from data_processing.li_dataset import LiClusterDataset
+    from ml_models.model import SchNetModel
 
 def setup_ddp(rank, world_size):
     """初始化分布式训练环境"""
@@ -150,7 +160,7 @@ def main(rank, world_size, args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Distributed SchNet Training")
-    parser.add_argument('--data_root', type=str, default='./li_dataset_processed', help='文件夹，用于存放处理好的数据')
+    parser.add_argument('--data_root', type=str, default='../data_processing/li_dataset_processed', help='文件夹，用于存放处理好的数据')
     parser.add_argument('--data_file', type=str, default='/data/Hackthon/data/TheDataOfClusters_4_40 copy.data', help='原始数据文件的路径')
     parser.add_argument('--epochs', type=int, default=200, help='训练轮数')
     parser.add_argument('--batch_size', type=int, default=128, help='每个GPU的批次大小')

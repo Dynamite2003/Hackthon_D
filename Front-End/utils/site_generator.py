@@ -5,7 +5,16 @@ Li金属团簇位点生成器
 import numpy as np
 from scipy.spatial.distance import cdist
 import itertools
-from surface_detector import SurfaceDetector
+try:
+    # 尝试相对导入（当作为模块使用时）
+    from .surface_detector import SurfaceDetector
+except ImportError:
+    # 回退到绝对导入（当作为脚本直接运行时）
+    import sys
+    import os
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, current_dir)
+    from utils.surface_detector import SurfaceDetector
 
 class SiteGenerator:
     def __init__(self, min_distance=1.0, max_distance=4.0):

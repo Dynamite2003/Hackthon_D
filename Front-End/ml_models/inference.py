@@ -5,12 +5,29 @@ Li金属团簇推理模块
 import torch
 import numpy as np
 from torch_geometric.data import Data, Batch
-from model import SchNetModel
-from li_dataset import LiClusterDataset
+try:
+    # 尝试相对导入（当作为模块使用时）
+    from .model import SchNetModel
+    from ..data_processing.li_dataset import LiClusterDataset
+except ImportError:
+    # 回退到绝对导入（当作为脚本直接运行时）
+    import sys
+    import os
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, current_dir)
+    from ml_models.model import SchNetModel
+    from data_processing.li_dataset import LiClusterDataset
 import os
 
 class LiClusterInference:
-    def __init__(self, model_path='best_schnet_model.pt', data_root='./li_dataset_processed'):
+    def __init__(self, model_path=None, data_root=None):
+        # 动态确定模型和数据路径
+        if model_path is None:
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            model_path = os.path.join(current_dir, 'ml_models', 'best_schnet_model.pt')
+        if data_root is None:
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            data_root = os.path.join(current_dir, 'data_processing', 'li_dataset_processed')
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = SchNetModel().to(self.device)
         

@@ -4,18 +4,39 @@ Li金属团簇位点优化器
 """
 import numpy as np
 from scipy.optimize import basinhopping
-from inference import LiClusterInference
-from site_generator import SiteGenerator
+try:
+    # 尝试相对导入（当作为模块使用时）
+    from ..ml_models.inference import LiClusterInference
+    from .site_generator import SiteGenerator
+    from ..visualization_tools.molecular_visualizer import MolecularVisualizer
+    from ..visualization_tools.advanced_molecular_visualizer import AdvancedMolecularVisualizer
+    from ..visualization_tools.ball_stick_visualizer import BallStickVisualizer
+except ImportError:
+    # 回退到绝对导入（当作为脚本直接运行时）
+    import sys
+    import os
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, current_dir)
+    from ml_models.inference import LiClusterInference
+    from utils.site_generator import SiteGenerator
+    from visualization_tools.molecular_visualizer import MolecularVisualizer
+    from visualization_tools.advanced_molecular_visualizer import AdvancedMolecularVisualizer
+    from visualization_tools.ball_stick_visualizer import BallStickVisualizer
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
-from molecular_visualizer import MolecularVisualizer
-from advanced_molecular_visualizer import AdvancedMolecularVisualizer
-from ball_stick_visualizer import BallStickVisualizer
+import os
 
 class SiteOptimizer:
-    def __init__(self, model_path='best_schnet_model.pt', data_root='./li_dataset_processed',
-                 min_distance=1.0, max_distance=4.0):
+    def __init__(self, model_path=None, data_root=None, min_distance=1.0, max_distance=4.0):
+        # 动态确定模型和数据路径
+        if model_path is None:
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            model_path = os.path.join(current_dir, 'ml_models', 'best_schnet_model.pt')
+        if data_root is None:
+            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            data_root = os.path.join(current_dir, 'data_processing', 'li_dataset_processed')
         """
         初始化位点优化器
         """

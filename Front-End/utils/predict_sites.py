@@ -7,7 +7,16 @@ import numpy as np
 import json
 import os
 import sys
-from optimizer import SiteOptimizer
+try:
+    # 尝试相对导入（当作为模块使用时）
+    from .optimizer import SiteOptimizer
+except ImportError:
+    # 回退到绝对导入（当作为脚本直接运行时）
+    import sys
+    import os
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, current_dir)
+    from utils.optimizer import SiteOptimizer
 
 def parse_coordinates_from_string(coord_str):
     """
@@ -146,16 +155,16 @@ def main():
         epilog="""
 使用示例:
   # 直接输入坐标
-  python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" --top-k 3
+  python run_predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" --top-k 3
 
   # 从文件读取
-  python predict_sites.py --file structure.xyz --strategy combined --top-k 5
+  python run_predict_sites.py --file structure.xyz --strategy combined --top-k 5
 
   # 使用网格搜索
-  python predict_sites.py --file structure.csv --strategy grid --grid-spacing 0.3
+  python run_predict_sites.py --file structure.csv --strategy grid --grid-spacing 0.3
 
   # 保存详细结果
-  python predict_sites.py --coords "0,0,0;2,0,0" --output results.json --save-xyz results.xyz
+  python run_predict_sites.py --coords "0,0,0;2,0,0" --output results.json --save-xyz results.xyz
         """
     )
     

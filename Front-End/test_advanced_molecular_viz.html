@@ -1,5 +1,5 @@
-<div id="3dmolviewer_175597557271181"  style="position: relative; width: 1000px; height: 800px;">
-        <p id="3dmolwarning_175597557271181" style="background-color:#ffcccc;color:black">3Dmol.js failed to load for some reason.  Please check your browser console for error messages.<br></p>
+<div id="3dmolviewer_1756011159625984"  style="position: relative; width: 1000px; height: 800px;">
+        <p id="3dmolwarning_1756011159625984" style="background-color:#ffcccc;color:black">3Dmol.js failed to load for some reason.  Please check your browser console for error messages.<br></p>
         </div>
 <script>
 
@@ -30,47 +30,56 @@ $3Dmolpromise = null;
   $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@2.5.2/build/3Dmol-min.js');
 }
 
-var viewer_175597557271181 = null;
-var warn = document.getElementById("3dmolwarning_175597557271181");
+var viewer_1756011159625984 = null;
+var warn = document.getElementById("3dmolwarning_1756011159625984");
 if(warn) {
     warn.parentNode.removeChild(warn);
 }
 $3Dmolpromise.then(function() {
-viewer_175597557271181 = $3Dmol.createViewer(document.getElementById("3dmolviewer_175597557271181"),{backgroundColor:"white"});
-viewer_175597557271181.zoomTo();
-	viewer_175597557271181.addModel("9\nLi\u56e2\u7c07\u4f4d\u70b9\u9884\u6d4b\u7ed3\u679c (\u5019\u9009: 137)\nLi -1.7138 -2.5707 2.1413\nLi -3.4276 -0.8569 0.4275\nLi 0.0000 -0.8569 0.4275\nLi 0.0000 -4.2826 0.4275\nLi 1.7138 0.8569 -1.2844\nLi 3.4276 2.5707 0.4275\nLi 0.0000 2.5707 0.4275\nLi 0.0000 2.5707 -2.9982\nN 1.9393 4.4813 -2.0343\n","xyz");
-	viewer_175597557271181.setStyle({"stick": {"radius": 0.15, "color": "gray"}, "sphere": {"scale": 0.15}});
-	viewer_175597557271181.setStyle({"elem": "Li"},{"sphere": {"color": "#CC80FF", "scale": 0.25}, "stick": {"radius": 0.15, "color": "#CC80FF"}});
-	viewer_175597557271181.setStyle({"elem": "N"},{"sphere": {"color": "gold", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "gold"}});
-	viewer_175597557271181.setStyle({"elem": "P"},{"sphere": {"color": "#0077BB", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#0077BB"}});
-	viewer_175597557271181.setStyle({"elem": "O"},{"sphere": {"color": "#EE7733", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#EE7733"}});
-	viewer_175597557271181.setStyle({"elem": "F"},{"sphere": {"color": "#009988", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#009988"}});
-	viewer_175597557271181.setStyle({"elem": "C"},{"sphere": {"color": "#CC3311", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#CC3311"}});
-	viewer_175597557271181.setStyle({"elem": "S"},{"sphere": {"color": "#BBBBBB", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#BBBBBB"}});
-	viewer_175597557271181.addCylinder({"start": {"x": -1.7138, "y": -2.5707, "z": 2.1413}, "end": {"x": -3.4276, "y": -0.8569, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": -1.7138, "y": -2.5707, "z": 2.1413}, "end": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": -1.7138, "y": -2.5707, "z": 2.1413}, "end": {"x": 0.0, "y": -4.2826, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": -3.4276, "y": -0.8569, "z": 0.4275}, "end": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "end": {"x": 0.0, "y": -4.2826, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "end": {"x": 1.7138, "y": 0.8569, "z": -1.2844}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": -0.8569, "z": 0.4275}, "end": {"x": 0.0, "y": 2.5707, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 1.7138, "y": 0.8569, "z": -1.2844}, "end": {"x": 3.4276, "y": 2.5707, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 1.7138, "y": 0.8569, "z": -1.2844}, "end": {"x": 0.0, "y": 2.5707, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 1.7138, "y": 0.8569, "z": -1.2844}, "end": {"x": 0.0, "y": 2.5707, "z": -2.9982}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 3.4276, "y": 2.5707, "z": 0.4275}, "end": {"x": 0.0, "y": 2.5707, "z": 0.4275}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 3.4276, "y": 2.5707, "z": 0.4275}, "end": {"x": 1.939260353306928, "y": 4.4812896759107765, "z": -2.0343260357154618}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": 2.5707, "z": 0.4275}, "end": {"x": 0.0, "y": 2.5707, "z": -2.9982}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addCylinder({"start": {"x": 0.0, "y": 2.5707, "z": -2.9982}, "end": {"x": 1.939260353306928, "y": 4.4812896759107765, "z": -2.0343260357154618}, "radius": 0.08, "color": "gray", "opacity": 0.7});
-	viewer_175597557271181.addBox({"center": {"x": 0.0, "y": 0.09934483795538807, "z": -0.42845}, "dimensions": {"w": 8.8552, "h": 10.763889675910777, "d": 7.1395}, "color": "black", "wireframe": true, "opacity": 0.6});
-	viewer_175597557271181.addArrow({"start": {"x": -4.4276, "y": -5.2826, "z": -3.9982}, "end": {"x": 2.0307338055464657, "y": -5.2826, "z": -3.9982}, "color": "red", "radius": 0.1});
-	viewer_175597557271181.addLabel("X",{"position": {"x": 2.0307338055464657, "y": -5.2826, "z": -3.9982}, "fontColor": "red", "fontSize": 14});
-	viewer_175597557271181.addArrow({"start": {"x": -4.4276, "y": -5.2826, "z": -3.9982}, "end": {"x": -4.4276, "y": 1.1757338055464652, "z": -3.9982}, "color": "green", "radius": 0.1});
-	viewer_175597557271181.addLabel("Y",{"position": {"x": -4.4276, "y": 1.1757338055464652, "z": -3.9982}, "fontColor": "green", "fontSize": 14});
-	viewer_175597557271181.addArrow({"start": {"x": -4.4276, "y": -5.2826, "z": -3.9982}, "end": {"x": -4.4276, "y": -5.2826, "z": 2.4601338055464654}, "color": "blue", "radius": 0.1});
-	viewer_175597557271181.addLabel("Z",{"position": {"x": -4.4276, "y": -5.2826, "z": 2.4601338055464654}, "fontColor": "blue", "fontSize": 14});
-	viewer_175597557271181.zoomTo();
-	viewer_175597557271181.spin(true);
-viewer_175597557271181.render();
+viewer_1756011159625984 = $3Dmol.createViewer(document.getElementById("3dmolviewer_1756011159625984"),{backgroundColor:"white"});
+viewer_1756011159625984.zoomTo();
+	viewer_1756011159625984.addModel("9\nLi\u56e2\u7c07\u4f4d\u70b9\u9884\u6d4b\u7ed3\u679c (\u5019\u9009: 6827)\nLi -1.9060 0.8190 -1.8960\nLi 0.5110 0.0040 -0.7540\nLi 2.7760 1.6320 -0.7430\nLi -0.0400 2.6920 -0.4050\nLi 0.9010 1.2730 -3.1440\nLi 1.2120 1.0890 1.7580\nLi 0.5490 -1.9320 1.2180\nLi -1.5410 0.5470 1.0750\nN -1.4060 -1.9320 -1.1440\n","xyz");
+	viewer_1756011159625984.setStyle({"stick": {"radius": 0.15, "color": "gray"}, "sphere": {"scale": 0.15}});
+	viewer_1756011159625984.setStyle({"elem": "Li"},{"sphere": {"color": "#CC80FF", "scale": 0.25}, "stick": {"radius": 0.15, "color": "#CC80FF"}});
+	viewer_1756011159625984.setStyle({"elem": "N"},{"sphere": {"color": "gold", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "gold"}});
+	viewer_1756011159625984.setStyle({"elem": "P"},{"sphere": {"color": "#0077BB", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#0077BB"}});
+	viewer_1756011159625984.setStyle({"elem": "O"},{"sphere": {"color": "#EE7733", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#EE7733"}});
+	viewer_1756011159625984.setStyle({"elem": "F"},{"sphere": {"color": "#009988", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#009988"}});
+	viewer_1756011159625984.setStyle({"elem": "C"},{"sphere": {"color": "#CC3311", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#CC3311"}});
+	viewer_1756011159625984.setStyle({"elem": "S"},{"sphere": {"color": "#BBBBBB", "opacity": 0.9, "scale": 0.2}, "stick": {"radius": 0.15, "color": "#BBBBBB"}});
+	viewer_1756011159625984.addCylinder({"start": {"x": -1.906, "y": 0.819, "z": -1.896}, "end": {"x": 0.511, "y": 0.004, "z": -0.754}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": -1.906, "y": 0.819, "z": -1.896}, "end": {"x": -0.04, "y": 2.692, "z": -0.405}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": -1.906, "y": 0.819, "z": -1.896}, "end": {"x": 0.901, "y": 1.273, "z": -3.144}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": -1.906, "y": 0.819, "z": -1.896}, "end": {"x": -1.541, "y": 0.547, "z": 1.075}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": -1.906, "y": 0.819, "z": -1.896}, "end": {"x": -1.4059999999999997, "y": -1.9320000000000004, "z": -1.1440000000000001}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.511, "y": 0.004, "z": -0.754}, "end": {"x": 2.776, "y": 1.632, "z": -0.743}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.511, "y": 0.004, "z": -0.754}, "end": {"x": -0.04, "y": 2.692, "z": -0.405}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.511, "y": 0.004, "z": -0.754}, "end": {"x": 0.901, "y": 1.273, "z": -3.144}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.511, "y": 0.004, "z": -0.754}, "end": {"x": 1.212, "y": 1.089, "z": 1.758}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.511, "y": 0.004, "z": -0.754}, "end": {"x": 0.549, "y": -1.932, "z": 1.218}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.511, "y": 0.004, "z": -0.754}, "end": {"x": -1.541, "y": 0.547, "z": 1.075}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.511, "y": 0.004, "z": -0.754}, "end": {"x": -1.4059999999999997, "y": -1.9320000000000004, "z": -1.1440000000000001}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 2.776, "y": 1.632, "z": -0.743}, "end": {"x": -0.04, "y": 2.692, "z": -0.405}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 2.776, "y": 1.632, "z": -0.743}, "end": {"x": 0.901, "y": 1.273, "z": -3.144}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 2.776, "y": 1.632, "z": -0.743}, "end": {"x": 1.212, "y": 1.089, "z": 1.758}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": -0.04, "y": 2.692, "z": -0.405}, "end": {"x": 0.901, "y": 1.273, "z": -3.144}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": -0.04, "y": 2.692, "z": -0.405}, "end": {"x": 1.212, "y": 1.089, "z": 1.758}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": -0.04, "y": 2.692, "z": -0.405}, "end": {"x": -1.541, "y": 0.547, "z": 1.075}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 1.212, "y": 1.089, "z": 1.758}, "end": {"x": 0.549, "y": -1.932, "z": 1.218}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 1.212, "y": 1.089, "z": 1.758}, "end": {"x": -1.541, "y": 0.547, "z": 1.075}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.549, "y": -1.932, "z": 1.218}, "end": {"x": -1.541, "y": 0.547, "z": 1.075}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": 0.549, "y": -1.932, "z": 1.218}, "end": {"x": -1.4059999999999997, "y": -1.9320000000000004, "z": -1.1440000000000001}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addCylinder({"start": {"x": -1.541, "y": 0.547, "z": 1.075}, "end": {"x": -1.4059999999999997, "y": -1.9320000000000004, "z": -1.1440000000000001}, "radius": 0.08, "color": "gray", "opacity": 0.7});
+	viewer_1756011159625984.addBox({"center": {"x": 0.43499999999999994, "y": 0.3799999999999999, "z": -0.6930000000000001}, "dimensions": {"w": 6.6819999999999995, "h": 6.6240000000000006, "d": 6.902}, "color": "black", "wireframe": true, "opacity": 0.6});
+	viewer_1756011159625984.addArrow({"start": {"x": -2.9059999999999997, "y": -2.9320000000000004, "z": -4.144}, "end": {"x": 1.2351999999999999, "y": -2.9320000000000004, "z": -4.144}, "color": "red", "radius": 0.1});
+	viewer_1756011159625984.addLabel("X",{"position": {"x": 1.2351999999999999, "y": -2.9320000000000004, "z": -4.144}, "fontColor": "red", "fontSize": 14});
+	viewer_1756011159625984.addArrow({"start": {"x": -2.9059999999999997, "y": -2.9320000000000004, "z": -4.144}, "end": {"x": -2.9059999999999997, "y": 1.2091999999999992, "z": -4.144}, "color": "green", "radius": 0.1});
+	viewer_1756011159625984.addLabel("Y",{"position": {"x": -2.9059999999999997, "y": 1.2091999999999992, "z": -4.144}, "fontColor": "green", "fontSize": 14});
+	viewer_1756011159625984.addArrow({"start": {"x": -2.9059999999999997, "y": -2.9320000000000004, "z": -4.144}, "end": {"x": -2.9059999999999997, "y": -2.9320000000000004, "z": -0.00280000000000058}, "color": "blue", "radius": 0.1});
+	viewer_1756011159625984.addLabel("Z",{"position": {"x": -2.9059999999999997, "y": -2.9320000000000004, "z": -0.00280000000000058}, "fontColor": "blue", "fontSize": 14});
+	viewer_1756011159625984.zoomTo();
+	viewer_1756011159625984.spin(true);
+viewer_1756011159625984.render();
 });
 </script>
         <script>

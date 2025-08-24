@@ -1,6 +1,0 @@
-units metal
-atom_style atomic
-read_data test_li.initial
-pair_style lj/cut 10.0
-pair_coeff 1 1 0.05 2.5
-run 0

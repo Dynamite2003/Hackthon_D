@@ -13,16 +13,24 @@
 ## 文件结构
 
 ```
-code/
-├── inference.py          # 推理模块 - 加载模型和预测功能
-├── site_generator.py     # 位点生成器 - 多种位点生成策略
-├── optimizer.py          # 优化器 - 整合位点生成和能量预测
-├── predict_sites.py      # 主程序 - 命令行界面
-├── test_system.py        # 测试脚本 - 系统功能验证
-├── model.py             # SchNet模型定义
-├── li_dataset.py        # 数据集处理
-├── best_schnet_model.pt # 训练好的模型文件
-└── li_dataset_processed/ # 处理后的数据集
+Front-End/
+├── run_predict_sites.py     # 主程序入口 - 命令行界面
+├── run_inference.py         # 推理测试入口
+├── ml_models/               # 机器学习模型
+│   ├── model.py            # SchNet模型定义
+│   ├── inference.py        # 推理模块
+│   ├── train_ddp.py        # 分布式训练
+│   └── best_schnet_model.pt # 训练好的模型文件
+├── utils/                   # 工具模块
+│   ├── predict_sites.py    # 位点预测核心逻辑
+│   ├── optimizer.py        # 优化器
+│   ├── site_generator.py   # 位点生成器
+│   └── surface_detector.py # 表面检测
+├── data_processing/         # 数据处理
+│   ├── li_dataset.py       # 数据集处理
+│   └── li_dataset_processed/ # 处理后的数据集
+├── visualization_tools/     # 可视化工具
+└── li_cluster_project/     # Django Web应用
 ```
 
 ## 安装依赖
@@ -37,37 +45,37 @@ pip install torch torch-geometric torch-cluster torch-scatter torch-sparse matpl
 
 ```bash
 # 基本用法 - 预测Li3三角形团簇的最佳新原子位置
-python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" --strategy combined --top-k 5
+python run_predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" --strategy combined --top-k 5
 
 # 使用随机策略，生成100个候选位点
-python predict_sites.py --coords "0,0,0;2.5,0,0" --strategy random --n-random 100 --top-k 3
+python run_predict_sites.py --coords "0,0,0;2.5,0,0" --strategy random --n-random 100 --top-k 3
 
 # 使用网格搜索，间距0.3Å
-python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" --strategy grid --grid-spacing 0.3 --top-k 5
+python run_predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" --strategy grid --grid-spacing 0.3 --top-k 5
 ```
 
 ### 2. 从文件读取坐标
 
 ```bash
 # 从XYZ文件读取
-python predict_sites.py --file structure.xyz --strategy combined --top-k 5
+python run_predict_sites.py --file structure.xyz --strategy combined --top-k 5
 
 # 从CSV文件读取
-python predict_sites.py --file positions.csv --strategy combined --top-k 3
+python run_predict_sites.py --file positions.csv --strategy combined --top-k 3
 
 # 从JSON文件读取
-python predict_sites.py --file cluster.json --strategy combined --top-k 5
+python run_predict_sites.py --file cluster.json --strategy combined --top-k 5
 ```
 
 ### 3. 保存结果
 
 ```bash
 # 保存JSON格式结果和XYZ结构文件
-python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
+python run_predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
     --output results.json --save-xyz structures.xyz --top-k 3
 
 # 保存可视化图片
-python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
+python run_predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
     --save-plot visualization.png --no-plot --top-k 5
 ```
 
@@ -75,7 +83,7 @@ python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
 
 ```bash
 # 使用迭代优化获得更精确的结果（较慢但更准确）
-python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
+python run_predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
     --iterative --n-iterations 5 --top-k 3
 ```
 
@@ -83,7 +91,7 @@ python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
 
 ```bash
 # 自定义原子间距约束
-python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
+python run_predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0" \\
     --min-distance 1.2 --max-distance 3.5 --top-k 5
 ```
 
@@ -210,18 +218,18 @@ python test_system.py
 
 ### 示例1: Li2二原子添加第三个原子
 ```bash
-python predict_sites.py --coords "0,0,0;2.5,0,0" --strategy combined --top-k 3
+python run_predict_sites.py --coords "0,0,0;2.5,0,0" --strategy combined --top-k 3
 ```
 
 ### 示例2: Li4四面体添加第五个原子  
 ```bash
-python predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0;1,0.577,1.633" \\
+python run_predict_sites.py --coords "0,0,0;2,0,0;1,1.732,0;1,0.577,1.633" \\
     --strategy combined --top-k 5 --output li5_results.json
 ```
 
 ### 示例3: 从文件读取并保存完整结果
 ```bash
-python predict_sites.py --file my_cluster.xyz \\
+python run_predict_sites.py --file my_cluster.xyz \\
     --strategy combined --top-k 5 \\
     --output optimization_results.json \\
     --save-xyz best_structures.xyz \\

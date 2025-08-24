@@ -8,7 +8,16 @@ from scipy.spatial import ConvexHull, distance_matrix
 # from sklearn.neighbors import NearestNeighbors  # 不需要sklearn
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from molecular_visualizer import MolecularVisualizer
+try:
+    # 尝试相对导入（当作为模块使用时）
+    from ..visualization_tools.molecular_visualizer import MolecularVisualizer
+except ImportError:
+    # 回退到绝对导入（当作为脚本直接运行时）
+    import sys
+    import os
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, current_dir)
+    from visualization_tools.molecular_visualizer import MolecularVisualizer
 
 class SurfaceDetector:
     def __init__(self, coordination_threshold=12, surface_shell_thickness=2.0):
